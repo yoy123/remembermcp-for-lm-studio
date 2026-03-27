@@ -1,4 +1,4 @@
-"""Tools for managing VS Code .instructions.md files."""
+"""Tools for managing LM Studio .instructions.md files."""
 
 from typing import Annotated, Optional
 
@@ -15,7 +15,7 @@ def register_instruction_tools() -> None:
 
     @app.tool(
         name="create_instruction",
-        description="Create a new VS Code .instructions.md file with the specified description and content.",
+        description="Create a new LM Studio .instructions.md file with the specified description and content.",
         tags={"public", "instruction"},
         annotations={
             "idempotentHint": False,
@@ -37,21 +37,21 @@ def register_instruction_tools() -> None:
         description: Annotated[str, "A brief description of what this instruction does"],
         content: Annotated[str, "The main content/instructions in markdown format"],
     ) -> str:
-        """Create a new VS Code .instructions.md file with the specified description and content."""
+        """Create a new LM Studio .instructions.md file with the specified description and content."""
         if read_only:
             return "Error: Server is running in read-only mode"
         try:
             success = instruction_manager.create_instruction(instruction_name, description, content)
             if success:
-                return f"Successfully created VS Code instruction: {instruction_name}"
+                return f"Successfully created LM Studio instruction: {instruction_name}"
             else:
-                return f"Failed to create VS Code instruction: {instruction_name}"
+                return f"Failed to create LM Studio instruction: {instruction_name}"
         except Exception as e:
-            return f"Error creating VS Code instruction '{instruction_name}': {str(e)}"
+            return f"Error creating LM Studio instruction '{instruction_name}': {str(e)}"
 
     @app.tool(
         name="list_instructions",
-        description="List all VS Code .instructions.md files in the prompts directory.",
+        description="List all LM Studio .instructions.md files in the prompts directory.",
         tags={"public", "instruction"},
         annotations={
             "idempotentHint": True,
@@ -64,12 +64,12 @@ def register_instruction_tools() -> None:
         },
     )
     def list_instructions() -> str:
-        """List all VS Code .instructions.md files in the prompts directory."""
+        """List all LM Studio .instructions.md files in the prompts directory."""
         try:
             instructions = instruction_manager.list_instructions()
             if not instructions:
-                return "No VS Code instruction files found in the prompts directory"
-            result = f"Found {len(instructions)} VS Code instruction(s):\n\n"
+                return "No LM Studio instruction files found in the prompts directory"
+            result = f"Found {len(instructions)} LM Studio instruction(s):\n\n"
             for instruction in instructions:
                 result += f"Name: {instruction['name']}\n"
                 result += f"   File: {instruction['filename']}\n"
@@ -81,11 +81,11 @@ def register_instruction_tools() -> None:
                 result += "\n"
             return result
         except Exception as e:
-            return f"Error listing VS Code instructions: {str(e)}"
+            return f"Error listing LM Studio instructions: {str(e)}"
 
     @app.tool(
         name="get_instruction",
-        description="Get the raw content of a VS Code .instructions.md file.",
+        description="Get the raw content of a LM Studio .instructions.md file.",
         tags={"public", "instruction"},
         annotations={
             "idempotentHint": True,
@@ -103,7 +103,7 @@ def register_instruction_tools() -> None:
     def get_instruction(
         instruction_name: Annotated[str, "Name of the instruction (without extension)"],
     ) -> str:
-        """Get the raw content of a VS Code .instructions.md file."""
+        """Get the raw content of a LM Studio .instructions.md file."""
         try:
             # Ensure correct extension
             if not instruction_name.endswith(INSTRUCTION_FILE_EXTENSION):
@@ -111,11 +111,11 @@ def register_instruction_tools() -> None:
             raw_content = instruction_manager.get_raw_instruction(instruction_name)
             return raw_content
         except Exception as e:
-            return f"Error getting VS Code instruction '{instruction_name}': {str(e)}"
+            return f"Error getting LM Studio instruction '{instruction_name}': {str(e)}"
 
     @app.tool(
         name="update_instruction",
-        description="Update an existing VS Code .instructions.md file with new description or content.",
+        description="Update an existing LM Studio .instructions.md file with new description or content.",
         tags={"public", "instruction"},
         annotations={
             "idempotentHint": False,
@@ -137,21 +137,21 @@ def register_instruction_tools() -> None:
         description: Annotated[Optional[str], "Optional new description for the instruction"] = None,
         content: Annotated[Optional[str], "Optional new content for the instruction"] = None,
     ) -> str:
-        """Update an existing VS Code .instructions.md file with new description or content."""
+        """Update an existing LM Studio .instructions.md file with new description or content."""
         if read_only:
             return "Error: Server is running in read-only mode"
         try:
             success = instruction_manager.update_instruction(instruction_name, content=content)
             if success:
-                return f"Successfully updated VS Code instruction: {instruction_name}"
+                return f"Successfully updated LM Studio instruction: {instruction_name}"
             else:
-                return f"Failed to update VS Code instruction: {instruction_name}"
+                return f"Failed to update LM Studio instruction: {instruction_name}"
         except Exception as e:
-            return f"Error updating VS Code instruction '{instruction_name}': {str(e)}"
+            return f"Error updating LM Studio instruction '{instruction_name}': {str(e)}"
 
     @app.tool(
         name="delete_instruction",
-        description="Delete a VS Code .instructions.md file from the prompts directory.",
+        description="Delete a LM Studio .instructions.md file from the prompts directory.",
         tags={"public", "instruction"},
         annotations={
             "idempotentHint": False,
@@ -169,14 +169,14 @@ def register_instruction_tools() -> None:
     def delete_instruction(
         instruction_name: Annotated[str, "The name of the instruction to delete (with or without extension)"],
     ) -> str:
-        """Delete a VS Code .instructions.md file from the prompts directory."""
+        """Delete a LM Studio .instructions.md file from the prompts directory."""
         if read_only:
             return "Error: Server is running in read-only mode"
         try:
             success = instruction_manager.delete_instruction(instruction_name)
             if success:
-                return f"Successfully deleted VS Code instruction: {instruction_name}"
+                return f"Successfully deleted LM Studio instruction: {instruction_name}"
             else:
-                return f"Failed to delete VS Code instruction: {instruction_name}"
+                return f"Failed to delete LM Studio instruction: {instruction_name}"
         except Exception as e:
-            return f"Error deleting VS Code instruction '{instruction_name}': {str(e)}"
+            return f"Error deleting LM Studio instruction '{instruction_name}': {str(e)}"

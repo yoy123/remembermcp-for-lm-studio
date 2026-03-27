@@ -3,7 +3,7 @@
 Main entry point for the Mode Manager MCP Server.
 
 This script provides the command-line interface to run the MCP server
-for managing VS Code .chatmode.md and .instructions.md files (GitHub Copilot prompts).
+for managing LM Studio .chatmode.md and .instructions.md files (LM Studio prompts).
 """
 
 import argparse
@@ -43,7 +43,7 @@ def setup_logging(debug: bool = False) -> None:
 def parse_arguments() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Mode Manager MCP Server - Manage .chatmode.md files for GitHub Copilot",
+        description="Mode Manager MCP Server - Manage .chatmode.md files for LM Studio",
         prog="mode-manager-mcp",
     )
 

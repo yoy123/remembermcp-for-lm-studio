@@ -160,7 +160,7 @@ def register_remember_tools() -> None:
             if result["status"] == "success":
                 scope_desc = "workspace" if scope_enum == MemoryScope.workspace else "global"
                 lang_desc = f" for {language}" if language else ""
-                return f"Remembered: {memory_item}\nStored in {scope_desc} memory{lang_desc}.\nFile: {result['filename']}\nThis memory will be available to AI assistants when the memory instruction is active in VS Code."
+                return f"Remembered: {memory_item}\nStored in {scope_desc} memory{lang_desc}.\nFile: {result['filename']}\nThis memory will be available to AI assistants when the memory instruction is active in LM Studio."
             else:
                 return f"Error: {result.get('message', 'Unknown error occurred')}"
 
@@ -169,16 +169,16 @@ def register_remember_tools() -> None:
 
     @app.prompt(
         name="onboarding",
-        description="Direct onboarding instructions for Copilot, including memory file structure.",
-        tags={"onboarding", "copilot"},
+        description="Direct onboarding instructions for LM Studio, including memory file structure.",
+        tags={"onboarding", "LM Studio"},
     )
     async def onboarding_memory_copilot(ctx: Context) -> list[Any]:
-        # await ctx.info("Direct onboarding instructions for Copilot, including memory file structure.")
+        # await ctx.info("Direct onboarding instructions for LM Studio, including memory file structure.")
         return [
             Message(
                 role="user",
                 content=(
-                    """Copilot, follow these onboarding steps for Mode Managers - memory management:
+                    """LM Studio, follow these onboarding steps for Mode Managers - memory management:
                     1. Call the '#mcp_mode-manager_get_instruction' tool with instruction_name='memory'.
                     - If the file exists, retrieve its content for updating.
                     - If it does not exist, simply proceed; the memory file will be created automatically when you update.

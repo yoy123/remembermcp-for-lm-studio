@@ -1,8 +1,8 @@
 """
 Mode Manager MCP Server.
 
-This package provides an MCP server for managing VS Code chatmode files
-and GitHub Copilot instructions. The server uses a singleton orchestration
+This package provides an MCP server for managing LM Studio chatmode files
+and LM Studio instructions. The server uses a singleton orchestration
 pattern with tools organized in separate modules.
 """
 
