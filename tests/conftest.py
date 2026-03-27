@@ -1,9 +1,22 @@
 import os
 import tempfile
+import asyncio
+import inspect
+import sys
+from pathlib import Path
 from typing import Generator
 from unittest.mock import patch
 
 import pytest
+
+
+# Ensure local package imports work when project is not installed in env
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_SRC_DIR = _PROJECT_ROOT / "src"
+if _SRC_DIR.exists():
+    src_str = str(_SRC_DIR)
+    if src_str not in sys.path:
+        sys.path.insert(0, src_str)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -19,7 +32,7 @@ def global_patch_and_tempdir() -> Generator[str, None, None]:
 
     # Patch globally for all tests
     prompts_dir_patcher = patch(
-        "mode_manager_mcp.path_utils.get_vscode_prompts_directory",
+        "mode_manager_mcp.path_utils.get_managed_prompts_directory",
         return_value=prompts_dir,
     )
     # Patch os.getcwd() specifically in the instruction_manager module
@@ -40,3 +53,20 @@ def global_patch_and_tempdir() -> Generator[str, None, None]:
     import shutil
 
     shutil.rmtree(temp_dir)
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    # Register asyncio marker so tests don't warn when pytest-asyncio is absent
+    config.addinivalue_line("markers", "asyncio: mark test as asyncio test")
+
+
+def pytest_pyfunc_call(pyfuncitem: pytest.Function) -> bool | None:
+    """
+    Fallback async test runner when pytest-asyncio plugin is not installed.
+    """
+    test_function = pyfuncitem.obj
+    if inspect.iscoroutinefunction(test_function):
+        kwargs = {arg: pyfuncitem.funcargs[arg] for arg in pyfuncitem._fixtureinfo.argnames}
+        asyncio.run(test_function(**kwargs))
+        return True
+    return None

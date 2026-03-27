@@ -37,6 +37,24 @@ def detect_vscode_variant() -> Optional[str]:
 logger = logging.getLogger(__name__)
 
 
+def get_lmstudio_prompts_directory() -> Path:
+    """
+    Get LM Studio prompts directory.
+
+    Returns:
+        Path to LM Studio prompts directory (creates if missing)
+    """
+    env_dir = os.environ.get("LMSTUDIO_PROMPTS_DIR")
+    if env_dir:
+        prompts_dir = Path(env_dir)
+    else:
+        prompts_dir = Path.home() / ".lmstudio" / "prompts"
+
+    prompts_dir.mkdir(parents=True, exist_ok=True)
+    logger.debug(f"LM Studio prompts directory: {prompts_dir}")
+    return prompts_dir
+
+
 def get_vscode_user_directory() -> Path:
     """
     Get the host editor user directory for the current platform.
@@ -98,12 +116,36 @@ def get_vscode_prompts_directory() -> Path:
     return prompts_dir
 
 
+def get_managed_prompts_directory() -> Path:
+    """
+    Get the managed prompts directory using LM Studio-first resolution.
+
+    Resolution order:
+      1. MCP_PROMPTS_DIRECTORY env override
+      2. LM Studio prompts directory
+      3. VS Code prompts directory (legacy fallback)
+    """
+    env_dir = os.environ.get("MCP_PROMPTS_DIRECTORY")
+    if env_dir:
+        prompts_dir = Path(env_dir)
+        prompts_dir.mkdir(parents=True, exist_ok=True)
+        logger.debug(f"Managed prompts directory (env): {prompts_dir}")
+        return prompts_dir
+
+    try:
+        return get_lmstudio_prompts_directory()
+    except Exception as e:
+        logger.warning(f"Failed to resolve LM Studio prompts directory: {e}")
+
+    return get_vscode_prompts_directory()
+
+
 def get_lmstudio_memories_directory() -> Optional[Path]:
     """
     Get the LM Studio memories directory, creating it if needed.
 
     Returns:
-        Path to ~/.lmstudio/memories/ or None if LM Studio is not installed.
+        Path to LM Studio memories directory.
         Can be overridden with LMSTUDIO_MEMORIES_DIR environment variable.
     """
     env_dir = os.environ.get("LMSTUDIO_MEMORIES_DIR")
@@ -112,8 +154,6 @@ def get_lmstudio_memories_directory() -> Optional[Path]:
         p.mkdir(parents=True, exist_ok=True)
         return p
     lmstudio_dir = Path.home() / ".lmstudio"
-    if not lmstudio_dir.exists():
-        return None
     memories_dir = lmstudio_dir / "memories"
     memories_dir.mkdir(parents=True, exist_ok=True)
     logger.debug(f"LM Studio memories directory: {memories_dir}")
@@ -204,7 +244,22 @@ def ensure_directory(path: Path) -> bool:
 
 def is_vscode_workspace(path: Path) -> bool:
     """
+    Backward-compatible wrapper for editor workspace detection.
+
+    Args:
+        path: Path to check
+
+    Returns:
+        True if path contains supported editor workspace files
+    """
+    return is_editor_workspace(path)
+
+
+def is_editor_workspace(path: Path) -> bool:
+    """
     Check if a path is a supported editor workspace.
+
+    Supports VS Code workspace markers and LM Studio-managed project markers.
 
     Args:
         path: Path to check
@@ -215,12 +270,14 @@ def is_vscode_workspace(path: Path) -> bool:
     if not path.is_dir():
         return False
 
-    # Check for editor workspace settings directory
     vscode_dir = path / ".vscode"
     if vscode_dir.exists() and vscode_dir.is_dir():
         return True
 
-    # Check for .code-workspace files
+    instructions_dir = path / ".github" / "instructions"
+    if instructions_dir.exists() and instructions_dir.is_dir():
+        return True
+
     for file_path in path.glob("*.code-workspace"):
         if file_path.is_file():
             return True
@@ -238,8 +295,21 @@ def get_workspace_settings_path(workspace_path: Path) -> Optional[Path]:
     Returns:
         Path to settings.json if workspace exists, None otherwise
     """
-    if not is_vscode_workspace(workspace_path):
+    if not is_editor_workspace(workspace_path):
         return None
 
     settings_path = workspace_path / ".vscode" / "settings.json"
     return settings_path if settings_path.parent.exists() else None
+
+
+def get_editor_settings_path(workspace_path: Path) -> Optional[Path]:
+    """
+    Generic alias for editor workspace settings path.
+
+    Args:
+        workspace_path: Path to workspace directory
+
+    Returns:
+        Path to settings.json if workspace exists, None otherwise
+    """
+    return get_workspace_settings_path(workspace_path)

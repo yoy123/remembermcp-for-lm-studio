@@ -1,11 +1,6 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="remember-new-logo-complete-white.svg">
-  <source media="(prefers-color-scheme: light)" srcset="remember-new-logo-complete-black.svg">
-  <img alt="LM Studio Memory Tool" src="https://raw.githubusercontent.com/NiclasOlofsson/mode-manager-mcp/refs/heads/main/remember-new-logo-complete-black.svg" width="800">
-</picture>
-
-
 # Meet #remember -- Real Memory for You, Your Team, and Your AI
+
+![LM Studio Memory Tool](remember-new-logo-complete-black.svg)
 
 [![Use with LM Studio](https://img.shields.io/badge/LM_Studio-Manual_Setup-0098FF?style=flat-square&logoColor=white)](#option-2-manual-configuration)
 [![LM Studio Onboarding](https://img.shields.io/badge/LM_Studio-Run_Onboarding-24bfa5?style=flat-square&logoColor=white)](#bonus-interactive-onboarding)
@@ -15,6 +10,7 @@
 Mode Manager MCP is an AI-powered memory and context system for developers and teams. It lets you and your team “remember” important facts, preferences, and best practices—so your AI assistant always has the right context, and your team’s knowledge is never lost.
 
 With Mode Manager MCP, you can:
+
 - Instantly store and retrieve personal, team, and language-specific knowledge.
 - Share onboarding notes, coding conventions, and project wisdom—right where you work.
 - Make your AI assistant smarter, more helpful, and always in sync with your workflow.
@@ -25,8 +21,10 @@ With Mode Manager MCP, you can:
 - **Workspace (Team) Memory:** Share best practices, onboarding notes, and team knowledge directly in the repo. New team members ramp up faster, and everyone stays on the same page.
 - **Language-Specific Memory:** Save and retrieve language-specific tips and conventions. Your assistant adapts to each language’s best practices automatically.
 - **Natural Language Simplicity:** Just say “remember…”—no config files, no YAML, no technical hurdles.
-- **Smarter Coding, Fewer Repeated Questions:** Your team’s memory grows over time, reducing repeated questions and ensuring consistent practices.- **AI-Powered Memory Optimization:** Automatically consolidate and organize your memories to keep them clean and efficient.
+- **Smarter Coding, Fewer Repeated Questions:** Your team’s memory grows over time, reducing repeated questions and ensuring consistent practices.
+- **AI-Powered Memory Optimization:** Automatically consolidate and organize your memories to keep them clean and efficient.
 &nbsp;  
+
 >&nbsp;  
 > **Before this tool**  
 > *"Hey LM Studio, write me a Python function..."*  
@@ -40,9 +38,9 @@ With Mode Manager MCP, you can:
 
 **Ready to have LM Studio that actually remembers you? [Get started now!](#get-it-running-2-minutes)**
 
-## Real-World Examples: Just Say It!
+## Real-World Examples: Just Say It
 
-You don’t need special syntax—just talk to LM Studio naturally. Mode Manager MCP is extremely relaxed about how you phrase things. 
+You don’t need special syntax—just talk to LM Studio naturally. Mode Manager MCP is extremely relaxed about how you phrase things.
 If it sounds like something you want remembered, it will be!
 
 >&nbsp;  
@@ -52,7 +50,7 @@ If it sounds like something you want remembered, it will be!
 >
 > ---  
 >**Team memory**  
-> You: *We alw&nbsp;ays use the Oatly data pipeline template and follow our naming conventions.
+> You: *We always use the Oatly data pipeline template and follow our naming conventions.
 > (Let’s make sure everyone remembers that.)*
 >
 > ---  
@@ -179,11 +177,10 @@ To run the latest code directly from GitHub:
 }
 ```
 
-
 ## Under the Hood: How Memory Magic Happens
 
-Mode Manager MCP is designed to make memory persistent, context-aware, and 
-easy to manage—without you having to think about the details. Here’s how 
+Mode Manager MCP is designed to make memory persistent, context-aware, and
+easy to manage—without you having to think about the details. Here’s how
 it works under the hood:
 
 ### Memory Scopes
@@ -199,37 +196,37 @@ it works under the hood:
 
 ### How Memory is Stored
 
-All memory is saved as Markdown files with a YAML frontmatter header, 
-making it both human- and machine-readable. Each entry is timestamped and 
-neatly organized, so you can always see when and what was remembered. You 
-never have to manage these files yourself—Mode Manager MCP automatically 
+All memory is saved as Markdown files with a YAML frontmatter header,
+making it both human- and machine-readable. Each entry is timestamped and
+neatly organized, so you can always see when and what was remembered. You
+never have to manage these files yourself—Mode Manager MCP automatically
 creates and updates them as you add new memories.
 
 ### How Memory is Loaded
 
-Here’s the magic: Mode Manager MCP writes and manages all your memory files, 
-but it’s LM Studio that automatically picks them up 
-for every conversation. This deep integration means that, every time you send 
-a message or ask LM Studio for help, your user, workspace, and language memories 
+Here’s the magic: Mode Manager MCP writes and manages all your memory files,
+but it’s LM Studio that automatically picks them up
+for every conversation. This deep integration means that, every time you send
+a message or ask LM Studio for help, your user, workspace, and language memories
 are instantly available to the AI.
 
-Language-specific memory is even smarter: it’s tied to file types using 
-the `applyTo` property in the YAML frontmatter (for example, `**/*.py` for Python 
-or `**/*.cs` for C#). This means you get the right tips, conventions, and 
-reminders only when you’re working in the relevant language or file type—no clutter, 
+Language-specific memory is even smarter: it’s tied to file types using
+the `applyTo` property in the YAML frontmatter (for example, `**/*.py` for Python
+or `**/*.cs` for C#). This means you get the right tips, conventions, and
+reminders only when you’re working in the relevant language or file type—no clutter,
 just the context you need, exactly when you need it.
 
-You never have to worry about context being lost between messages or sessions; your 
-memory is always active and available. We’re simply leveraging LM Studio 
+You never have to worry about context being lost between messages or sessions; your
+memory is always active and available. We’re simply leveraging LM Studio
 to make your assistant (and your team) smarter than ever.
 
 ### No Special Syntax Needed
 
-There’s no need to remember special commands or keywords—just talk naturally. Mode Manager 
-MCP is flexible and understands a wide range of phrasing. You don’t have to say 
-“workspace” to store team memory; it recognizes common alternatives like “project,” 
-“repo,” or even just describing something as a team convention. Whether you’re 
-making a personal note, a team guideline, or a language-specific tip, just say it 
+There’s no need to remember special commands or keywords—just talk naturally. Mode Manager
+MCP is flexible and understands a wide range of phrasing. You don’t have to say
+“workspace” to store team memory; it recognizes common alternatives like “project,”
+“repo,” or even just describing something as a team convention. Whether you’re
+making a personal note, a team guideline, or a language-specific tip, just say it
 in your own words—Mode Manager MCP figures out what you want to remember and where it belongs.
 
 ## Contributing

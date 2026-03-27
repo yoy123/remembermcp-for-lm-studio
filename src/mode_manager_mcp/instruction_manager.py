@@ -15,7 +15,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import unquote
 
-from .path_utils import get_lmstudio_conversation_config_path, get_lmstudio_memories_directory, get_vscode_prompts_directory
+from .path_utils import (
+    get_lmstudio_conversation_config_path,
+    get_lmstudio_memories_directory,
+    get_managed_prompts_directory,
+)
 from .simple_file_ops import (
     FileOperationError,
     parse_frontmatter,
@@ -82,7 +86,7 @@ class InstructionManager:
         if prompts_dir:
             self.prompts_dir = Path(prompts_dir)
         else:
-            self.prompts_dir = get_vscode_prompts_directory()
+            self.prompts_dir = get_managed_prompts_directory()
 
         # Ensure prompts directory exists
         self.prompts_dir.mkdir(parents=True, exist_ok=True)
@@ -531,13 +535,13 @@ class InstructionManager:
                 return content[end + 4:].lstrip("\n")
         return content
 
-    def _sync_to_lmstudio(self, vscode_file_path: Path) -> None:
+    def _sync_to_lmstudio(self, memory_file_path: Path) -> None:
         """Mirror a managed memory file to LM Studio's memories dir and global system prompt."""
         try:
             lmstudio_dir = get_lmstudio_memories_directory()
             if not lmstudio_dir:
                 return
-            raw = vscode_file_path.read_text(encoding="utf-8")
+            raw = memory_file_path.read_text(encoding="utf-8")
             plain = self._strip_frontmatter(raw)
             memory_md = lmstudio_dir / "memory.md"
             memory_md.write_text(plain, encoding="utf-8")
