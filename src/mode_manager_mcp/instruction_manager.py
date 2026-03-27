@@ -1,8 +1,8 @@
 """
-Mode Manager for VS Code .instructions.md files.
+Mode Manager for LM Studio .instructions.md files.
 
 This module handles instruction files which define custom instructions
-and workspace-specific AI guidance for VS Code Copilot.
+and workspace-specific AI guidance for LM Studio.
 
 Note: This file has been refactored to eliminate DRY violations.
 """
@@ -70,14 +70,14 @@ class MemoryFileConfig:
 
 
 class InstructionManager:
-    """Manages VS Code .instructions.md files in both user and workspace prompts directories."""
+    """Manages LM Studio .instructions.md files in both user and workspace prompts directories."""
 
     def __init__(self, prompts_dir: Optional[Union[str, Path]] = None):
         """
         Initialize instruction manager.
 
         Args:
-            prompts_dir: Custom prompts directory (default: VS Code user dir + prompts)
+            prompts_dir: Custom prompts directory (default: detected user prompts dir)
         """
         if prompts_dir:
             self.prompts_dir = Path(prompts_dir)
@@ -532,7 +532,7 @@ class InstructionManager:
         return content
 
     def _sync_to_lmstudio(self, vscode_file_path: Path) -> None:
-        """Mirror a VS Code memory file to LM Studio's memories dir and global system prompt."""
+        """Mirror a managed memory file to LM Studio's memories dir and global system prompt."""
         try:
             lmstudio_dir = get_lmstudio_memories_directory()
             if not lmstudio_dir:

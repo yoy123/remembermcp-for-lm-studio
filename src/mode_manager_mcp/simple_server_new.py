@@ -1,8 +1,8 @@
 """
 Mode Manager MCP Server Implementation.
 
-This server provides tools for managing VS Code .instructions.md files
-which define custom instructions for GitHub Copilot.
+This server provides tools for managing LM Studio .instructions.md files
+which define custom instructions for LM Studio.
 """
 
 import logging
@@ -26,7 +26,7 @@ class ModeManagerServer:
     """
     Mode Manager MCP Server.
 
-    Provides tools for managing VS Code .instructions.md files.
+    Provides tools for managing LM Studio .instructions.md files.
     """
 
     def __init__(self, prompts_dir: Optional[str] = None):
@@ -41,29 +41,29 @@ class ModeManagerServer:
         self.app = create_fastmcp_app(
             version=__version__,
             name="Mode Manager MCP",
-            instructions="""Persistent Copilot Memory for VS Code (2025+).
+            instructions="""Persistent LM Studio Memory (2025+).
 
             GitHub Repository: https://github.com/NiclasOlofsson/mode-manager-mcp
 
             Game-Changer for 2025:
-            - Copilot now loads instructions with every chat message, not just at session start.
+            - LM Studio now loads instructions with every chat message, not just at session start.
             - Your memories and preferences are ALWAYS active in every conversation, across sessions, topics, and projects.
 
             Main Feature:
             - Store your work context, coding preferences, and workflow details using the remember(memory_item) tool.
 
             How It Works:
-            - Auto-setup: Creates memory.instructions.md in your VS Code prompts directory on first use.
+            - Auto-setup: Creates memory.instructions.md in your LM Studio memory flow on first use.
             - Smart storage: Each memory is timestamped and organized for easy retrieval.
-            - Always loaded: VS Code includes your memories in every chat request.
+            - Always loaded: LM Studio includes your memories in every chat request.
 
             Additional Capabilities:
             - Manage and organize .instructions.md files.
             - AI-powered memory optimization to consolidate and organize your memories.
 
             Usage Example:
-            - Ask Copilot: "Remember that I prefer detailed docstrings and use pytest for testing"
-            - Copilot will remember this across all future conversations.
+            - Ask LM Studio: "Remember that I prefer detailed docstrings and use pytest for testing"
+            - LM Studio will remember this across all future conversations.
             """,
         )
         self.instruction_manager = InstructionManager(prompts_dir=prompts_dir)

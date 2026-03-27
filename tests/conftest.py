@@ -18,7 +18,7 @@ def global_patch_and_tempdir() -> Generator[str, None, None]:
     os.environ["MCP_PROMPTS_DIRECTORY"] = prompts_dir
 
     # Patch globally for all tests
-    vscode_patcher = patch(
+    prompts_dir_patcher = patch(
         "mode_manager_mcp.path_utils.get_vscode_prompts_directory",
         return_value=prompts_dir,
     )
@@ -29,12 +29,12 @@ def global_patch_and_tempdir() -> Generator[str, None, None]:
         return_value=mock_workspace_dir,
     )
 
-    vscode_patcher.start()
+    prompts_dir_patcher.start()
     getcwd_patcher.start()
 
     yield prompts_dir
 
-    vscode_patcher.stop()
+    prompts_dir_patcher.stop()
     getcwd_patcher.stop()
 
     import shutil

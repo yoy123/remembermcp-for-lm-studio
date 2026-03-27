@@ -15,14 +15,14 @@ def server(global_patch_and_tempdir: str) -> ModeManagerServer:
 
 @pytest.mark.asyncio
 async def test_user_memory_isolation(server: ModeManagerServer) -> None:
-    """Test that user memory writes to temp directory, not real VS Code prompts."""
+    """Test that user memory writes to the temp directory, not the legacy prompts location."""
     async with Client(server.app) as client:
         result = await client.call_tool("remember", {"memory_item": "test user memory isolation", "scope": "user"})
         assert "Remembered" in result.data or "Remembered" in str(result)
 
-        # Verify no files were created in real VS Code prompts directory
-        real_vscode_dir = Path.home() / "AppData" / "Roaming" / "Code - Insiders" / "User" / "prompts"
-        if real_vscode_dir.exists():
+        # Verify no files were created in the legacy prompts directory
+        legacy_prompts_dir = Path.home() / "AppData" / "Roaming" / "Code - Insiders" / "User" / "prompts"
+        if legacy_prompts_dir.exists():
             # Should not have created new memory files during test
             # (existing ones from actual usage are OK)
             pass

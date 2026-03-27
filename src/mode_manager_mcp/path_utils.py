@@ -1,7 +1,7 @@
 """
-Path utilities for VS Code and system directory detection.
+Path utilities for LM Studio integration and editor directory detection.
 
-This module provides utilities for finding VS Code configuration directories
+This module provides utilities for finding compatible editor configuration directories
 and handling cross-platform path operations.
 """
 
@@ -15,7 +15,7 @@ import psutil
 
 
 def detect_vscode_variant() -> Optional[str]:
-    # Walk up the process tree to find VS Code (Stable or Insiders)
+    # Walk up the process tree to find the host editor variant (Stable or Insiders)
     try:
         proc: Optional[psutil.Process] = psutil.Process(os.getpid())
         while proc:
@@ -30,7 +30,7 @@ def detect_vscode_variant() -> Optional[str]:
             proc = proc.parent()
         return None
     except Exception as e:
-        logger.error(f"Error walking process tree for VS Code variant: {e}")
+        logger.error(f"Error walking process tree for editor variant: {e}")
         return None
 
 
@@ -39,13 +39,13 @@ logger = logging.getLogger(__name__)
 
 def get_vscode_user_directory() -> Path:
     """
-    Get the VS Code user directory for the current platform.
+    Get the host editor user directory for the current platform.
 
     Returns:
-        Path to VS Code user directory
+        Path to the host editor user directory
 
     Raises:
-        OSError: If VS Code directory cannot be found
+        OSError: If the host editor directory cannot be found
     """
     system = platform.system()
     variant = detect_vscode_variant()
@@ -71,22 +71,22 @@ def get_vscode_user_directory() -> Path:
 
     # Use detected variant if possible
     if variant == "insiders":
-        logger.debug(f"VS Code Insiders user directory (by process): {insiders_dir}")
+        logger.debug(f"Insiders user directory (by process): {insiders_dir}")
         return insiders_dir
     elif variant == "stable":
-        logger.debug(f"VS Code stable user directory (by process): {stable_dir}")
+        logger.debug(f"Stable user directory (by process): {stable_dir}")
         return stable_dir
     # Fallback: Prefer Insiders if present
     if insiders_dir.exists():
-        logger.debug(f"VS Code Insiders user directory: {insiders_dir}")
+        logger.debug(f"Insiders user directory: {insiders_dir}")
         return insiders_dir
-    logger.debug(f"VS Code stable user directory: {stable_dir}")
+    logger.debug(f"Stable user directory: {stable_dir}")
     return stable_dir
 
 
 def get_vscode_prompts_directory() -> Path:
     """
-    Get the VS Code prompts directory.
+    Get the managed prompts directory.
 
     Returns:
         Path to prompts directory (creates if not exists)
@@ -94,7 +94,7 @@ def get_vscode_prompts_directory() -> Path:
     user_dir = get_vscode_user_directory()
     prompts_dir = user_dir / "prompts"
     prompts_dir.mkdir(parents=True, exist_ok=True)
-    logger.debug(f"VS Code prompts directory: {prompts_dir}")
+    logger.debug(f"Managed prompts directory: {prompts_dir}")
     return prompts_dir
 
 
@@ -133,10 +133,10 @@ def get_lmstudio_conversation_config_path() -> Optional[Path]:
 
 def find_vscode_executable() -> Optional[Path]:
     """
-    Find the VS Code executable on the current system.
+    Find the compatible editor executable on the current system.
 
     Returns:
-        Path to VS Code executable if found, None otherwise
+        Path to the compatible editor executable if found, None otherwise
     """
     system = platform.system()
 
@@ -169,7 +169,7 @@ def find_vscode_executable() -> Optional[Path]:
     # Check each possible path
     for path in possible_paths:
         if path.exists() and path.is_file():
-            logger.debug(f"Found VS Code executable: {path}")
+            logger.debug(f"Found compatible editor executable: {path}")
             return path
 
     # Try to find in PATH
@@ -177,10 +177,10 @@ def find_vscode_executable() -> Optional[Path]:
 
     code_path = shutil.which("code")
     if code_path:
-        logger.debug(f"Found VS Code executable in PATH: {code_path}")
+        logger.debug(f"Found compatible editor executable in PATH: {code_path}")
         return Path(code_path)
 
-    logger.warning("VS Code executable not found")
+    logger.warning("Compatible editor executable not found")
     return None
 
 
@@ -204,18 +204,18 @@ def ensure_directory(path: Path) -> bool:
 
 def is_vscode_workspace(path: Path) -> bool:
     """
-    Check if a path is a VS Code workspace.
+    Check if a path is a supported editor workspace.
 
     Args:
         path: Path to check
 
     Returns:
-        True if path contains VS Code workspace files
+        True if path contains supported editor workspace files
     """
     if not path.is_dir():
         return False
 
-    # Check for .vscode directory
+    # Check for editor workspace settings directory
     vscode_dir = path / ".vscode"
     if vscode_dir.exists() and vscode_dir.is_dir():
         return True
@@ -230,7 +230,7 @@ def is_vscode_workspace(path: Path) -> bool:
 
 def get_workspace_settings_path(workspace_path: Path) -> Optional[Path]:
     """
-    Get the settings.json path for a VS Code workspace.
+    Get the settings.json path for a supported editor workspace.
 
     Args:
         workspace_path: Path to workspace directory

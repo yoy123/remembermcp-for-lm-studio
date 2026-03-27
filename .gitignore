@@ -154,7 +154,7 @@ cython_debug/
 #  Community Edition, use 'PyCharm CE' and for PyCharm Professional Edition, use 'PyCharm'.
 .idea/
 
-# VS Code
+# Editor configuration
 
 .vscode/settings.json
 .vscode/launch.json

@@ -172,7 +172,7 @@ def register_remember_tools() -> None:
         description="Direct onboarding instructions for LM Studio, including memory file structure.",
         tags={"onboarding", "LM Studio"},
     )
-    async def onboarding_memory_copilot(ctx: Context) -> list[Any]:
+    async def onboarding_memory_lmstudio(ctx: Context) -> list[Any]:
         # await ctx.info("Direct onboarding instructions for LM Studio, including memory file structure.")
         return [
             Message(

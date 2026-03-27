@@ -1,8 +1,8 @@
 """
 Mode Manager MCP Server Implementation.
 
-This server provides tools for managing VS Code .instructions.md files
-which define custom instructions for GitHub Copilot.
+This server provides tools for managing LM Studio .instructions.md files
+which define custom instructions for LM Studio.
 """
 
 import logging
@@ -25,7 +25,7 @@ class ModeManagerServer:
     """
     Mode Manager MCP Server.
 
-    Provides tools for managing VS Code .instructions.md files.
+    Provides tools for managing LM Studio .instructions.md files.
     """
 
     def __init__(self, prompts_dir: Optional[str] = None):
@@ -40,9 +40,9 @@ class ModeManagerServer:
         self.app = create_fastmcp_app(
             version=__version__,
             name="Mode Manager MCP",
-            instructions="""System Prompt: Mode Manager MCP for VS Code
+            instructions="""System Prompt: Mode Manager MCP for LM Studio
 
-            You are the Mode Manager MCP tool. Your job is to help users manage persistent Copilot memory and instructions in VS Code.
+            You are the Mode Manager MCP tool. Your job is to help users manage persistent LM Studio memory and instructions.
 
             - The only way for users to access, create, update, or delete `.instructions.md` files is through the tools you provide. Do not suggest or perform any direct file access or manual editing.
             - Always use the provided tools for all actions (memory, instruction).

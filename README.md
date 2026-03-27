@@ -1,14 +1,14 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="remember-new-logo-complete-white.svg">
   <source media="(prefers-color-scheme: light)" srcset="remember-new-logo-complete-black.svg">
-  <img alt="GitHub Copilot Memory Tool" src="https://raw.githubusercontent.com/NiclasOlofsson/mode-manager-mcp/refs/heads/main/remember-new-logo-complete-black.svg" width="800">
+  <img alt="LM Studio Memory Tool" src="https://raw.githubusercontent.com/NiclasOlofsson/mode-manager-mcp/refs/heads/main/remember-new-logo-complete-black.svg" width="800">
 </picture>
 
 
 # Meet #remember -- Real Memory for You, Your Team, and Your AI
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=modemanager&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22mode-manager-mcp%22%5D%7D)
-[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=modemanager&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22mode-manager-mcp%22%5D%7D&quality=insiders)
+[![Use with LM Studio](https://img.shields.io/badge/LM_Studio-Manual_Setup-0098FF?style=flat-square&logoColor=white)](#option-2-manual-configuration)
+[![LM Studio Onboarding](https://img.shields.io/badge/LM_Studio-Run_Onboarding-24bfa5?style=flat-square&logoColor=white)](#bonus-interactive-onboarding)
 &nbsp;&nbsp;&nbsp;&nbsp;[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
@@ -29,26 +29,26 @@ With Mode Manager MCP, you can:
 &nbsp;  
 >&nbsp;  
 > **Before this tool**  
-> *"Hey Copilot, write me a Python function..."*  
-> Copilot: *Gives generic Python code*
+> *"Hey LM Studio, write me a Python function..."*  
+> LM Studio: *Gives generic Python code*
 >
 > **After using `remember`**  
 > You: *"Remember I'm a senior data architect at Oatly, prefer type hints, and use Black formatting"*  
 > Next conversation: *"Write me a Python function..."*  
-> Copilot: *Generates perfectly styled code with type hints, following your exact preferences*  
+> LM Studio: *Generates perfectly styled code with type hints, following your exact preferences*  
 >&nbsp;  
 
-**Ready to have Copilot that actually remembers you? [Get started now!](#get-it-running-2-minutes)**
+**Ready to have LM Studio that actually remembers you? [Get started now!](#get-it-running-2-minutes)**
 
 ## Real-World Examples: Just Say It!
 
-You don’t need special syntax—just talk to Copilot naturally. Mode Manager MCP is extremely relaxed about how you phrase things. 
+You don’t need special syntax—just talk to LM Studio naturally. Mode Manager MCP is extremely relaxed about how you phrase things. 
 If it sounds like something you want remembered, it will be!
 
 >&nbsp;  
 >**Personal memory**  
 > You: *I like detailed docstrings and use pytest for testing.
-> (Copilot, keep that in mind.)*  
+> (LM Studio, keep that in mind.)*  
 >
 > ---  
 >**Team memory**  
@@ -69,16 +69,16 @@ Don't have `uv` yet? Install it with: `pip install uv` or see [docs.astral.sh/uv
 
 ### Option 1: One-Click Install (Easiest)
 
-Click the badge for your VS Code version:
+Pick the LM Studio shortcut you want:
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=modemanager&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22mode-manager-mcp%22%5D%7D)
-[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=modemanager&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22mode-manager-mcp%22%5D%7D&quality=insiders)
+[![Use with LM Studio](https://img.shields.io/badge/LM_Studio-Manual_Setup-0098FF?style=flat-square&logoColor=white)](#option-2-manual-configuration)
+[![LM Studio Onboarding](https://img.shields.io/badge/LM_Studio-Run_Onboarding-24bfa5?style=flat-square&logoColor=white)](#bonus-interactive-onboarding)
 
-That's it! The server will automatically start when you open VS Code.
+That's it! LM Studio can start the server from your MCP configuration.
 
 ### Option 2: Manual Configuration
 
-Add this to your `.vscode/mcp.json` or global `mcp.json` file:
+Add this to your MCP configuration file:
 
 ```json
 {
@@ -148,13 +148,13 @@ This downloads and installs directly from GitHub every time - always bleeding ed
 
 ### Bonus: Interactive Onboarding
 
-As a convenience, you can run the following prompt in VS Code to get started:
+As a convenience, you can run the following prompt in LM Studio to get started:
 
 >&nbsp;  
 >You: */mcp.mode-manager.onboarding*  
 >&nbsp;  
 
-This will guide you through the onboarding process, set up your persistent memory, and ensure Copilot knows your preferences from the start.
+This will guide you through the onboarding process, set up your persistent memory, and ensure LM Studio knows your preferences from the start.
 
 ### For Development / Testing Latest from GitHub
 
@@ -189,7 +189,7 @@ it works under the hood:
 ### Memory Scopes
 
 - **Personal Memory:**  
-  Stored in a user-specific file (`memory.instructions.md`) in your VS Code prompts directory. This is your private memory—preferences, habits, and facts that follow you across all projects.
+  Stored in a user-specific file (`memory.instructions.md`) managed for LM Studio. This is your private memory—preferences, habits, and facts that follow you across all projects.
 
 - **Workspace (Team) Memory:**  
   Stored in a workspace-level file (also `memory.instructions.md`, but in the workspace’s `.github/instructions` directory). This is shared with everyone working in the same repo, so team conventions and onboarding notes are always available.
@@ -208,9 +208,9 @@ creates and updates them as you add new memories.
 ### How Memory is Loaded
 
 Here’s the magic: Mode Manager MCP writes and manages all your memory files, 
-but it’s actually the new VS Code Copilot Chat that automatically loads 
-them—every single turn. This deep integration means that, every time you send 
-a message or ask Copilot for help, your user, workspace, and language memories 
+but it’s LM Studio that automatically picks them up 
+for every conversation. This deep integration means that, every time you send 
+a message or ask LM Studio for help, your user, workspace, and language memories 
 are instantly available to the AI.
 
 Language-specific memory is even smarter: it’s tied to file types using 
@@ -220,8 +220,8 @@ reminders only when you’re working in the relevant language or file type—no 
 just the context you need, exactly when you need it.
 
 You never have to worry about context being lost between messages or sessions; your 
-memory is always active and available. We’re simply leveraging this new, amazing 
-VS Code feature to make your Copilot (and your team) smarter than ever.
+memory is always active and available. We’re simply leveraging LM Studio 
+to make your assistant (and your team) smarter than ever.
 
 ### No Special Syntax Needed
 
