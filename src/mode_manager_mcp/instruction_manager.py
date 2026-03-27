@@ -9,11 +9,13 @@ Note: This file has been refactored to eliminate DRY violations.
 
 import logging
 import os
+import json
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import unquote
 
-from .path_utils import get_vscode_prompts_directory
+from .path_utils import get_lmstudio_conversation_config_path, get_lmstudio_memories_directory, get_vscode_prompts_directory
 from .simple_file_ops import (
     FileOperationError,
     parse_frontmatter,
@@ -189,6 +191,9 @@ class InstructionManager:
         success = self.append_to_section(filename, "Memories", new_memory_entry, scope, workspace_root)
         if not success:
             raise FileOperationError(f"Failed to append memory to: {filename}")
+
+        # Mirror memory to LM Studio (no-op if LM Studio not installed)
+        self._sync_to_lmstudio(file_path)
 
         return {
             "status": "success",
@@ -517,6 +522,60 @@ class InstructionManager:
 
         except Exception as e:
             raise FileOperationError(f"Error deleting instruction file {instruction_name}: {e}")
+
+    def _strip_frontmatter(self, content: str) -> str:
+        """Remove YAML frontmatter block from markdown content."""
+        if content.startswith("---"):
+            end = content.find("\n---", 3)
+            if end != -1:
+                return content[end + 4:].lstrip("\n")
+        return content
+
+    def _sync_to_lmstudio(self, vscode_file_path: Path) -> None:
+        """Mirror a VS Code memory file to LM Studio's memories dir and global system prompt."""
+        try:
+            lmstudio_dir = get_lmstudio_memories_directory()
+            if not lmstudio_dir:
+                return
+            raw = vscode_file_path.read_text(encoding="utf-8")
+            plain = self._strip_frontmatter(raw)
+            memory_md = lmstudio_dir / "memory.md"
+            memory_md.write_text(plain, encoding="utf-8")
+            logger.info(f"Mirrored memory to LM Studio: {memory_md}")
+            self._update_lmstudio_system_prompt(plain)
+        except Exception as e:
+            logger.warning(f"Failed to sync memory to LM Studio: {e}")
+
+    def _update_lmstudio_system_prompt(self, memory_content: str) -> None:
+        """Inject memory content into LM Studio's global system prompt via conversation-config.json."""
+        config_path = get_lmstudio_conversation_config_path()
+        if not config_path:
+            return
+        MARKER_START = "<!-- LM_STUDIO_MEMORIES_START -->"
+        MARKER_END = "<!-- LM_STUDIO_MEMORIES_END -->"
+        new_block = f"{MARKER_START}\n{memory_content}\n{MARKER_END}"
+        try:
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            fields: list[dict[str, Any]] = config.setdefault("globalPredictionConfig", {}).setdefault("fields", [])
+            for field in fields:
+                if field.get("key") == "llm.prediction.systemPrompt":
+                    val: str = field["value"]
+                    if MARKER_START in val:
+                        field["value"] = re.sub(
+                            re.escape(MARKER_START) + r".*?" + re.escape(MARKER_END),
+                            new_block,
+                            val,
+                            flags=re.DOTALL,
+                        )
+                    else:
+                        field["value"] = (val + "\n\n" + new_block) if val else new_block
+                    break
+            else:
+                fields.append({"key": "llm.prediction.systemPrompt", "value": new_block})
+            config_path.write_text(json.dumps(config, indent=2), encoding="utf-8")
+            logger.info("Updated LM Studio global system prompt with memories")
+        except Exception as e:
+            logger.warning(f"Failed to update LM Studio system prompt: {e}")
 
     def get_memory_file_path(self, scope: MemoryScope = MemoryScope.user, language: Optional[str] = None, workspace_root: Optional[str] = None) -> Path:
         """

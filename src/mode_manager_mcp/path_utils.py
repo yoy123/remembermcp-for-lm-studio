@@ -98,6 +98,39 @@ def get_vscode_prompts_directory() -> Path:
     return prompts_dir
 
 
+def get_lmstudio_memories_directory() -> Optional[Path]:
+    """
+    Get the LM Studio memories directory, creating it if needed.
+
+    Returns:
+        Path to ~/.lmstudio/memories/ or None if LM Studio is not installed.
+        Can be overridden with LMSTUDIO_MEMORIES_DIR environment variable.
+    """
+    env_dir = os.environ.get("LMSTUDIO_MEMORIES_DIR")
+    if env_dir:
+        p = Path(env_dir)
+        p.mkdir(parents=True, exist_ok=True)
+        return p
+    lmstudio_dir = Path.home() / ".lmstudio"
+    if not lmstudio_dir.exists():
+        return None
+    memories_dir = lmstudio_dir / "memories"
+    memories_dir.mkdir(parents=True, exist_ok=True)
+    logger.debug(f"LM Studio memories directory: {memories_dir}")
+    return memories_dir
+
+
+def get_lmstudio_conversation_config_path() -> Optional[Path]:
+    """
+    Get the path to LM Studio's global conversation-config.json.
+
+    Returns:
+        Path to ~/.lmstudio/.internal/conversation-config.json, or None if not found.
+    """
+    p = Path.home() / ".lmstudio" / ".internal" / "conversation-config.json"
+    return p if p.exists() else None
+
+
 def find_vscode_executable() -> Optional[Path]:
     """
     Find the VS Code executable on the current system.

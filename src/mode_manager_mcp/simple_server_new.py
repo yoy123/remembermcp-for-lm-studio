@@ -9,12 +9,12 @@ import logging
 import os
 from typing import Optional
 
-from fastmcp import FastMCP
 from fastmcp.server.middleware.error_handling import ErrorHandlingMiddleware
 from fastmcp.server.middleware.logging import LoggingMiddleware
 from fastmcp.server.middleware.rate_limiting import RateLimitingMiddleware
 from fastmcp.server.middleware.timing import TimingMiddleware
 
+from .fastmcp_compat import create_fastmcp_app
 from .instruction_manager import InstructionManager
 from .server_registry import ServerRegistry
 from .tools import register_all_tools
@@ -38,7 +38,7 @@ class ModeManagerServer:
         # FastMCP initialization with recommended arguments
         from . import __version__
 
-        self.app = FastMCP(
+        self.app = create_fastmcp_app(
             version=__version__,
             name="Mode Manager MCP",
             instructions="""Persistent Copilot Memory for VS Code (2025+).
@@ -65,9 +65,6 @@ class ModeManagerServer:
             - Ask Copilot: "Remember that I prefer detailed docstrings and use pytest for testing"
             - Copilot will remember this across all future conversations.
             """,
-            on_duplicate_resources="warn",
-            on_duplicate_prompts="replace",
-            include_fastmcp_meta=True,  # Include FastMCP metadata for clients
         )
         self.instruction_manager = InstructionManager(prompts_dir=prompts_dir)
 
