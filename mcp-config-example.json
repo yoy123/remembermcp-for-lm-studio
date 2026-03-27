@@ -1,12 +1,10 @@
 {
   "servers": {
     "mode-manager": {
-      "command": "python",
+      "command": "/bin/bash",
       "args": [
-        "-m",
-        "src.mode_manager_mcp"
-      ],
-      "cwd": "."
+        "/run/media/dan/EXTRA/rememberMCP/remembermcp-for-lm-studio/scripts/run_mode_manager_mcp.sh"
+      ]
     }
   }
 }

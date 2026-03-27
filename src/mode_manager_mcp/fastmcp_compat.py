@@ -2,10 +2,31 @@
 
 from __future__ import annotations
 
+from importlib import import_module
 from inspect import Parameter, signature
 from typing import Any
 
 from fastmcp import FastMCP
+
+
+def get_fastmcp_middlewares() -> dict[str, type[Any] | None]:
+    """Load optional FastMCP middleware classes dynamically."""
+
+    middleware_specs = {
+        "error_handling": ("fastmcp.server.middleware.error_handling", "ErrorHandlingMiddleware"),
+        "timing": ("fastmcp.server.middleware.timing", "TimingMiddleware"),
+        "logging": ("fastmcp.server.middleware.logging", "LoggingMiddleware"),
+    }
+
+    loaded: dict[str, type[Any] | None] = {}
+    for key, (module_name, class_name) in middleware_specs.items():
+        try:
+            module = import_module(module_name)
+            loaded[key] = getattr(module, class_name)
+        except Exception:
+            loaded[key] = None
+
+    return loaded
 
 
 def create_fastmcp_app(*, name: str, version: str, instructions: str) -> FastMCP:

@@ -9,11 +9,7 @@ import logging
 import os
 from typing import Optional
 
-from fastmcp.server.middleware.error_handling import ErrorHandlingMiddleware
-from fastmcp.server.middleware.logging import LoggingMiddleware
-from fastmcp.server.middleware.timing import TimingMiddleware
-
-from .fastmcp_compat import create_fastmcp_app
+from .fastmcp_compat import create_fastmcp_app, get_fastmcp_middlewares
 from .instruction_manager import InstructionManager
 from .server_registry import ServerRegistry
 from .tools import register_all_tools
@@ -22,19 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 class ModeManagerServer:
-    """
-    Mode Manager MCP Server.
-
-    Provides tools for managing LM Studio .instructions.md files.
-    """
+    """Mode Manager MCP Server."""
 
     def __init__(self, prompts_dir: Optional[str] = None):
-        """Initialize the server.
-
-        Args:
-            prompts_dir: Custom prompts directory for all managers (optional)
-        """
-        # FastMCP initialization with recommended arguments
+        """Initialize the server."""
         from . import __version__
 
         self.app = create_fastmcp_app(
@@ -42,41 +29,47 @@ class ModeManagerServer:
             name="Mode Manager MCP",
             instructions="""System Prompt: Mode Manager MCP for LM Studio
 
-            You are the Mode Manager MCP tool. Your job is to help users manage persistent LM Studio memory and instructions.
+You are the Mode Manager MCP tool. Your job is to help users manage persistent LM Studio memory and instructions.
+- The only way for users to access, create, update, or delete `.instructions.md` files is through the tools you provide. Do not suggest or perform any direct file access or manual editing.
+- Always use the provided tools for all actions (memory, instruction).
+- Store user memories with the `remember(memory_item)` tool.
+- If unsure, ask the user for clarification before acting.
+- Always confirm actions if ambiguous.
+- Report errors clearly and suggest next steps.
 
-            - The only way for users to access, create, update, or delete `.instructions.md` files is through the tools you provide. Do not suggest or perform any direct file access or manual editing.
-            - Always use the provided tools for all actions (memory, instruction).
-            - Store user memories with the `remember(memory_item)` tool.
-            - If unsure, ask the user for clarification before acting.
-            - Always confirm actions if ambiguous.
-            - Report errors clearly and suggest next steps.
+Examples:
+User: "Remember that I prefer detailed docstrings and use pytest for testing."
+Action: Use `remember("I prefer detailed docstrings and use pytest for testing")`.
 
-            Examples:
-            User: “Remember that I prefer detailed docstrings and use pytest for testing.”
-            Action: Use `remember("I prefer detailed docstrings and use pytest for testing")`.
+User: "Store that I like snake_case for variable names."
+Action: Use `remember("I like snake_case for variable names")`.
 
-            User: “Store that I like snake_case for variable names.”
-            Action: Use `remember("I like snake_case for variable names")`.
+User: "Add to my preferences: always use type annotations."
+Action: Use `remember("always use type annotations")`.
 
-            User: “Add to my preferences: always use type annotations.”
-            Action: Use `remember("always use type annotations")`.
+User: "Log that I want async functions for I/O."
+Action: Use `remember("I want async functions for I/O")`.
 
-            User: “Log that I want async functions for I/O.”
-            Action: Use `remember("I want async functions for I/O")`.
-
-            GitHub: https://github.com/NiclasOlofsson/mode-manager-mcp            
-            """,
+GitHub: https://github.com/NiclasOlofsson/mode-manager-mcp
+""",
         )
         self.instruction_manager = InstructionManager(prompts_dir=prompts_dir)
-
         self.read_only = os.getenv("MCP_CHATMODE_READ_ONLY", "false").lower() == "true"
 
-        # Add built-in FastMCP middleware (2.11.0)
-        self.app.add_middleware(ErrorHandlingMiddleware())  # Handle errors first
-        self.app.add_middleware(TimingMiddleware())  # Time actual execution
-        self.app.add_middleware(LoggingMiddleware(include_payloads=True, max_payload_length=1000))
+        middlewares = get_fastmcp_middlewares()
 
-        # Initialize the singleton server registry
+        error_handling_middleware = middlewares["error_handling"]
+        if error_handling_middleware is not None:
+            self.app.add_middleware(error_handling_middleware())
+
+        timing_middleware = middlewares["timing"]
+        if timing_middleware is not None:
+            self.app.add_middleware(timing_middleware())
+
+        logging_middleware = middlewares["logging"]
+        if logging_middleware is not None:
+            self.app.add_middleware(logging_middleware(include_payloads=True, max_payload_length=1000))
+
         registry = ServerRegistry.get_instance()
         registry.initialize(
             app=self.app,
@@ -84,7 +77,6 @@ class ModeManagerServer:
             read_only=self.read_only,
         )
 
-        # Register all tools from separate modules
         register_all_tools()
 
         logger.info("Mode Manager MCP Server initialized")
@@ -92,7 +84,7 @@ class ModeManagerServer:
             logger.info("Running in READ-ONLY mode")
 
     def run(self) -> None:
-        self.app.run()
+        self.app.run(show_banner=False)
 
 
 def create_server() -> ModeManagerServer:
