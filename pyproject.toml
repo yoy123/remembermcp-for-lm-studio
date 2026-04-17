@@ -45,7 +45,7 @@ dev = [
     "pre-commit>=3.0.0",
     "types-psutil",
     "types-requests",
-    "pydocstringformatter>=0.4.0",
+    "pydocstringformatter>=0.7.5",
 ]
 
 [project.urls]
@@ -74,7 +74,7 @@ dev = [
     "pre-commit>=3.0.0",
     "types-psutil",
     "types-requests",
-    "pydocstringformatter>=0.4.0",
+    "pydocstringformatter>=0.7.5",
     "bump-my-version>=0.11.0",
 ]
 
